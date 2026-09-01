@@ -2,7 +2,7 @@
 
 import sys
 from fileshield.file_info import FileInformation
-from fileshield.hashing import compute_sha256
+from fileshield.hashing import compute_hashes
 
 
 def main():
@@ -29,11 +29,12 @@ def main():
         try:
             # Reuse FileInformation validation
             FileInformation(file_path)
-            sha256 = compute_sha256(file_path)
+            digests = compute_hashes(file_path, algorithms=("sha256", "sha512"))
             print("\n" + "=" * 60)
             print("FILE HASH")
             print("=" * 60)
-            print(f"SHA-256: {sha256}")
+            print(f"SHA-256: {digests.get('sha256')}")
+            print(f"SHA-512: {digests.get('sha512')}")
             print("=" * 60 + "\n")
         except FileNotFoundError as e:
             print(f"Error: {e}")

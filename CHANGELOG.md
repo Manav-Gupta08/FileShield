@@ -36,9 +36,8 @@ Example output includes:
 ### Unreleased
 
 #### Added
-- SHA-256 hashing support via `fileshield.hashing.compute_sha256`
-- CLI command: `fileshield_cli.py hash <file_path>` — computes SHA-256 digest
+SHA-256 and SHA-512 hashing support via `fileshield.hashing.compute_hashes`
+CLI command: `fileshield_cli.py hash <file_path>` — computes SHA-256 and SHA-512 digests
 
 Notes:
-- Hashing is implemented in a memory-efficient, chunked reader to avoid loading large files into memory.
 
