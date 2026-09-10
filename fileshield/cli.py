@@ -40,6 +40,9 @@ def cmd_info(args):
     except IsADirectoryError as e:
         print(f"Error: {e}")
         sys.exit(1)
+    except PermissionError as e:
+        print(f"Permission denied: {e}")
+        sys.exit(1)
 
 
 def cmd_hash(args):

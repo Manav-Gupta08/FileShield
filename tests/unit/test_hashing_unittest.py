@@ -40,6 +40,25 @@ class TestComputeHashes(unittest.TestCase):
         finally:
             Path(temp_path).unlink()
 
+    def test_compute_hashes_unreadable_file(self):
+        # Create a file and remove read permissions to simulate PermissionError
+        with tempfile.NamedTemporaryFile(delete=False) as tf:
+            tf.write(b"data")
+            tf.flush()
+            temp_path = tf.name
+
+        try:
+            Path(temp_path).chmod(0o000)
+            with self.assertRaises(PermissionError):
+                compute_hashes(temp_path, algorithms=("sha256",))
+        finally:
+            # Restore permissions so the file can be removed
+            try:
+                Path(temp_path).chmod(0o600)
+            except Exception:
+                pass
+            Path(temp_path).unlink()
+
 
 if __name__ == "__main__":
     unittest.main()
