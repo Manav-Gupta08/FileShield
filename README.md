@@ -57,3 +57,20 @@ PYTHONPATH=. pytest -q
 ```
 
 A GitHub Actions workflow has been added at `.github/workflows/python-ci.yml` to run the tests on push and pull requests.
+
+## Metadata Extraction (Milestone 2)
+
+FileShield now includes a small metadata utility for images. For Milestone 2 we start
+with EXIF extraction for JPEG/TIFF images using Pillow.
+
+Example (interactive):
+
+```bash
+# from repository root
+python3 - <<'PY'
+from fileshield.metadata import extract_image_exif
+print(extract_image_exif('/path/to/image.jpg'))
+PY
+```
+
+The function returns a dictionary mapping EXIF tag names to values. See `fileshield/metadata.py` for details and limitations.

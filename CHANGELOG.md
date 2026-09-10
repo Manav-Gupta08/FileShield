@@ -41,6 +41,11 @@ CLI command: `fileshield_cli.py hash <file_path>` — computes SHA-256 and SHA-5
 
 Notes:
 
+#### Added
+- Image EXIF extraction via `fileshield.metadata.extract_image_exif`
+- Added `Pillow` to `requirements.txt` for image metadata support
+- Unit test for basic EXIF extraction: `tests/unit/test_metadata_unittest.py`
+
 #### Changed
 - Added `requirements.txt` with test dependencies (pytest)
 - Added GitHub Actions workflow to run unit tests (`.github/workflows/python-ci.yml`)
