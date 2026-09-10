@@ -41,3 +41,12 @@ CLI command: `fileshield_cli.py hash <file_path>` — computes SHA-256 and SHA-5
 
 Notes:
 
+#### Changed
+- Added `requirements.txt` with test dependencies (pytest)
+- Added GitHub Actions workflow to run unit tests (`.github/workflows/python-ci.yml`)
+- CLI: Added `--algorithms` and `--json` options for `hash` command
+
+#### Added
+- Unit tests for `compute_hashes()` under `tests/unit/`
+
+
