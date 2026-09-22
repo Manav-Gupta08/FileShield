@@ -41,6 +41,33 @@ CLI command: `fileshield_cli.py hash <file_path>` — computes SHA-256 and SHA-5
 
 Notes:
 
+#### Milestone 2 (in progress)
+
+- Image EXIF extraction: `fileshield.metadata.extract_image_exif`
+	- Basic EXIF extraction for JPEG/TIFF using Pillow.
+	- Returns a mapping of EXIF tag names to values.
+	- Adds defensive validation for file existence and type.
+	- Unit test: `tests/unit/test_metadata_unittest.py` (creates a small JPEG and checks for no EXIF).
+	- `Pillow` added to `requirements.txt` to support image metadata extraction.
+
+#### Milestone 1 (completed work since 0.1.0)
+
+- Step 1: Basic file information command
+	- `fileshield_cli.py info <file_path>` — shows filename, absolute path, size, extension, timestamps, permissions.
+
+- Step 2: File hashing and verification
+	- `fileshield.hashing.compute_hashes()` — compute multiple digests in a single pass (supports `sha256`, `sha512` by default).
+	- `fileshield.hashing.compute_sha256()` — compatibility helper.
+	- `fileshield_cli.py hash <file_path>` — CLI command to compute hashes.
+	- CLI options: `--algorithms` (comma-separated, validated) and `--json` output for machine-readable results.
+	- Permission error handling added to CLI commands (friendly messages for unreadable files).
+	- Unit tests for hashing: `tests/unit/test_hashing_unittest.py` and `tests/unit/test_hashing.py` (basic, empty-file, unreadable-file tests).
+
+- Infrastructure and docs
+	- GitHub Actions workflow `.github/workflows/python-ci.yml` to run unit tests on push/PR.
+	- `requirements.txt` added (lists `pytest`, `Pillow`).
+	- `README.md` updated with test and CI instructions and example metadata usage.
+
 #### Added
 - Image EXIF extraction via `fileshield.metadata.extract_image_exif`
 - Added `Pillow` to `requirements.txt` for image metadata support
