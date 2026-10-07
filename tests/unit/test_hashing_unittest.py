@@ -1,6 +1,7 @@
 import hashlib
 import tempfile
 import unittest
+import os
 from pathlib import Path
 
 from fileshield.hashing import compute_hashes
@@ -40,6 +41,7 @@ class TestComputeHashes(unittest.TestCase):
         finally:
             Path(temp_path).unlink()
 
+    @unittest.skipIf(os.name == "nt" or (hasattr(os, "geteuid") and os.geteuid() == 0), "POSIX permissions require a non-root POSIX runner")
     def test_compute_hashes_unreadable_file(self):
         # Create a file and remove read permissions to simulate PermissionError
         with tempfile.NamedTemporaryFile(delete=False) as tf:
