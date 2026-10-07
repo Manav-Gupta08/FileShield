@@ -21,10 +21,14 @@ def compute_hashes(file_path: str, algorithms=("sha256", "sha512"), chunk_size: 
     Returns:
         Dictionary mapping algorithm name to hex digest.
     """
+    if not isinstance(chunk_size, int) or isinstance(chunk_size, bool) or chunk_size <= 0:
+        raise ValueError("chunk_size must be a positive integer")
     path = Path(file_path)
 
     # Initialize hash objects
     hashers = {name: hashlib.new(name) for name in algorithms}
+    if not hashers or any(hasher.digest_size == 0 for hasher in hashers.values()):
+        raise ValueError("At least one fixed-length hash algorithm is required")
 
     with path.open("rb") as f:
         while True:
