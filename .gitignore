@@ -26,3 +26,20 @@ uploads/
 temp/
 .env
 .env.local
+
+# Private learning notes and generated artifacts
+PROJECT_PHASE_GUIDE.md
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.log
+secrets/
+docs/screenshots/private-*
