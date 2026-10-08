@@ -20,6 +20,14 @@ class TestExifPrivacy(unittest.TestCase):
         self.assertIn("make", res["medium"])
         self.assertGreater(res["score"], 0)
 
+    def test_explainable_weights_and_cap(self):
+        res = classify_exif_privacy({"GPSInfo": "location", "Make": "Camera", "Model": "Model", "DateTime": "date"})
+        self.assertEqual(res["score"], 95)
+        self.assertEqual(len(res["high"]), 1)
+        self.assertEqual(len(res["medium"]), 2)
+        self.assertEqual(len(res["low"]), 1)
+        self.assertEqual(classify_exif_privacy({"GPSInfo": "gps", "GPSLatitude": "lat", "Make": "device"})["score"], 100)
+
 
 if __name__ == "__main__":
     unittest.main()
