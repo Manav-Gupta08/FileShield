@@ -45,6 +45,7 @@ def extract_image_exif(file_path: str) -> Dict[str, Any]:
     with Image.open(path) as img:
         # Some images expose EXIF via getexif (Pillow 6.0+) or _getexif()
         exif_data = None
+        exif = None
         try:
             exif = img.getexif()
             if exif:
@@ -61,12 +62,15 @@ def extract_image_exif(file_path: str) -> Dict[str, Any]:
         if not exif_data:
             return {}
 
-        # Map numeric EXIF tags to human-readable names where possible
-        tag_map = {v: k for k, v in ExifTags.TAGS.items()} if ExifTags else {}
-
         parsed = {}
         for tag_num, value in exif_data.items():
             tag_name = ExifTags.TAGS.get(tag_num, str(tag_num)) if ExifTags else str(tag_num)
+            if tag_num in (34665, 34853) and exif is not None:
+                nested = exif.get_ifd(tag_num)
+                nested_names = ExifTags.GPSTAGS if tag_num == 34853 else ExifTags.TAGS
+                value = {nested_names.get(key, str(key)): item for key, item in nested.items()}
+                if tag_num == 34665:
+                    parsed.update(value)
             parsed[tag_name] = value
 
         return parsed
