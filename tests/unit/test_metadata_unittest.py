@@ -11,6 +11,18 @@ except Exception:
 
 
 class TestImageMetadata(unittest.TestCase):
+    def test_nested_gps_names_are_expanded(self):
+        if Image is None:
+            self.skipTest("Pillow not installed")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "gps.jpg"
+            exif = Image.Exif()
+            exif[34853] = {1: "N", 2: (1, 2, 3), 3: "E", 4: (4, 5, 6)}
+            Image.new("RGB", (10, 10), color="red").save(path, exif=exif)
+            result = extract_image_exif(str(path))
+            self.assertEqual(result["GPSInfo"]["GPSLatitudeRef"], "N")
+            self.assertIn("GPSLongitude", result["GPSInfo"])
+
     def test_extract_exif_on_simple_jpeg(self):
         if Image is None:
             self.skipTest("Pillow not installed")
