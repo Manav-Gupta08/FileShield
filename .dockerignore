@@ -1,0 +1,13 @@
+.git
+.venv
+**/__pycache__
+**/node_modules
+frontend/dist
+temp
+uploads
+.env
+.env.local
+secrets
+PROJECT_PHASE_GUIDE.md
+.pytest_cache
+docs/screenshots/private-*
