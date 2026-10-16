@@ -8,29 +8,31 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: ["3.12"]
+        os: [ubuntu-latest, windows-latest]
+
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install --upgrade pytest
+          python -m pip install -r requirements-dev.txt
+          python -m pip install --no-deps -e .
 
-      - name: Run tests (unittest discovery)
+      - name: Run all tests
         env:
           PYTHONPATH: ${{ github.workspace }}
-        run: |
-          echo "Running unittest discovery"
-          python -m unittest discover -s tests -p "test_*.py" -v
+        run: python -m pytest -q
