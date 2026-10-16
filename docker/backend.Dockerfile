@@ -1,9 +1,9 @@
-FROM python:3.12-slim AS build
+FROM python:3.14-slim AS build
 WORKDIR /build
 COPY requirements.txt .
 RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
 
-FROM python:3.12-slim
+FROM python:3.14-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HOME=/tmp
 RUN groupadd --gid 10001 fileshield && useradd --uid 10001 --gid fileshield --no-create-home fileshield
 WORKDIR /app
