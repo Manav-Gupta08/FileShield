@@ -13,8 +13,10 @@ permissions:
 
 jobs:
   enable-auto-merge:
-    # Privileged context: never check out or run PR-controlled code here.
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.repository == 'Manav-Gupta08/FileShield'
+
     runs-on: ubuntu-latest
 
     steps:
