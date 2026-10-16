@@ -4,9 +4,15 @@ import argparse
 import json
 import sys
 import hashlib
+from pathlib import Path
+from getpass import getpass
 
 from fileshield.file_info import FileInformation
 from fileshield.hashing import compute_hashes
+from fileshield.detection import detect_file
+from fileshield.images import image_metadata, transform_image
+from fileshield.archives import analyze_archive
+from fileshield.protection import protect_file
 
 
 def parse_algorithms(value: str):
@@ -34,6 +40,7 @@ def cmd_info(args):
     try:
         fi = FileInformation(args.file_path)
         fi.display()
+        print(json.dumps(detect_file(args.file_path), indent=2))
     except FileNotFoundError as e:
         print(f"Error: {e}")
         sys.exit(1)
@@ -42,6 +49,9 @@ def cmd_info(args):
         sys.exit(1)
     except PermissionError as e:
         print(f"Permission denied: {e}")
+        sys.exit(1)
+    except (OSError, ValueError) as e:
+        print(f"Error: {e}")
         sys.exit(1)
 
 
@@ -81,6 +91,28 @@ def cmd_hash(args):
         sys.exit(1)
 
 
+def cmd_engine(args):
+    try:
+        if args.command == "metadata":
+            result = image_metadata(args.file_path)
+        elif args.command == "archives":
+            result = analyze_archive(args.file_path)
+        elif args.command in {"protect", "decrypt"}:
+            password = getpass("Existing password: " if args.command == "decrypt" else "Encryption password: ")
+            result = protect_file(args.file_path, args.output, password, args.command == "decrypt")
+        elif args.command == "sanitize":
+            source = Path(args.file_path)
+            output = args.output or str(source.with_name(source.stem + ".cleaned.png"))
+            result = transform_image(args.file_path, output, args.format)
+            result["output"] = output
+        else:
+            result = {"detection": detect_file(args.file_path), "hashes": compute_hashes(args.file_path)}
+        print(json.dumps(result, indent=2, default=str))
+    except (OSError, ValueError, RuntimeError) as error:
+        print(f"Error: {error}", file=sys.stderr)
+        sys.exit(1)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="fileshield")
     sub = parser.add_subparsers(dest="command")
@@ -94,6 +126,16 @@ def main(argv=None):
     p_hash.add_argument("--algorithms", "-a", help="Comma-separated algorithms (default: sha256,sha512)")
     p_hash.add_argument("--json", action="store_true", help="Output results in JSON format")
     p_hash.set_defaults(func=cmd_hash)
+
+    for command in ("metadata", "analyze", "archives", "sanitize", "protect", "decrypt"):
+        command_parser = sub.add_parser(command, help=f"{command.capitalize()} a local file")
+        command_parser.add_argument("file_path")
+        if command == "sanitize":
+            command_parser.add_argument("--output")
+            command_parser.add_argument("--format", choices=("png", "jpeg", "webp", "tiff"), default="png")
+        elif command in {"protect", "decrypt"}:
+            command_parser.add_argument("--output", required=True)
+        command_parser.set_defaults(func=cmd_engine)
 
     args = parser.parse_args(argv)
     if not hasattr(args, "func"):
